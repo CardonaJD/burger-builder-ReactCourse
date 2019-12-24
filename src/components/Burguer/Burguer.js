@@ -3,13 +3,21 @@ import BurguerIngredient from './BurgerIngredient/BurguerIngredient'
 import classes from './Burguer.module.css'
 
 const burger = (props) => {
-    console.log(classes.Burger)
+    let transformedIngredients = [];
+
+    for (let ingredientKey in props.ingredients ) {
+        let ingredientQty = props.ingredients[ingredientKey]
+        for (let i = 0; i < ingredientQty; i++) {
+            transformedIngredients.push(
+                <BurguerIngredient type = {ingredientKey} key={ingredientKey + i}/>
+            )
+        }
+    }
     return(
         <div className={classes.Burger}>
-            <BurguerIngredient type='bread-top'></BurguerIngredient>
-            <BurguerIngredient type='cheese'></BurguerIngredient>
-            <BurguerIngredient type='meat'></BurguerIngredient>
-            <BurguerIngredient type='bread-botton'></BurguerIngredient>
+            <BurguerIngredient type = 'bread-top'/>
+            {transformedIngredients}
+            <BurguerIngredient type = 'bread-botton'/>
         </div>
     )
 }
