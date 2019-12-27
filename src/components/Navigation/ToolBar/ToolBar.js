@@ -6,8 +6,10 @@ import NavigationItems from '../Navigationitems/NavigationItems'
 const toolBar = (props) => (
     <header className = {classes.Toolbar}>
         <div>MENU</div>
-        <Logo></Logo>
-        <NavigationItems />
+        <Logo/>
+        <nav className = {classes.DesktopOnly}>
+            <NavigationItems />
+        </nav>
     </header>
 );
 
