@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
-import Button from '../../UI/Button/Button'
+import Button from '../../UI/Button/Button';
+import {Link} from 'react-router-dom';
 
 class OrderSummary extends Component {
 
@@ -10,6 +11,7 @@ class OrderSummary extends Component {
 
     render () {
         const ingredientsSummary = [];
+        const queryIngredients = {};
 
         for (let [ingKey, IngQty] of Object.entries(this.props.ingredients)) {
             ingredientsSummary.push(
@@ -17,6 +19,7 @@ class OrderSummary extends Component {
                     <span style = {{textTransform: 'capitalize'}}>{ingKey}</span> : {IngQty} 
                 </li>
             )
+            queryIngredients[ingKey] = IngQty;
         }
     
         return ( 
@@ -26,10 +29,10 @@ class OrderSummary extends Component {
                 <ul>
                     {ingredientsSummary}
                 </ul>
-        <p><strong>Total price: {this.props.price.toFixed(2)} $</strong></p>
+                <p><strong>Total price: {this.props.price.toFixed(2)} $</strong></p>
                 <p>Continue to Checkout ? </p>
-                <Button btnType = 'Danger' clicked = {this.props.purchaseCancel}>CANCEL</Button>  
-                <Button btnType = 'Success' clicked = {this.props.purchaseContinue}>CONTINUE</Button>  
+                <Button btnType = 'Danger' clicked = {this.props.purchaseCancelled}>CANCEL</Button>  
+                <Button btnType = 'Success' clicked = {this.props.purchaseContinued}>CONTINUE </Button>  
             </Auxiliary>
         )
     }
