@@ -2,7 +2,6 @@ import React from 'react';
 import Burger from '../../Burguer/Burguer';
 import Button from '../../UI/Button/Button';
 import classes from './Checkoutsummary.module.css';
-import {Link} from 'react-router-dom';
 
 const checkSummary = (props) => {
     return (
