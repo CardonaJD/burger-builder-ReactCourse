@@ -4,7 +4,6 @@ import classes from "./ContacData.module.css";
 import Axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input'
-import input from "../../../components/UI/Input/Input";
 
 
 class ContacData extends Component {
@@ -16,7 +15,12 @@ class ContacData extends Component {
                     type : 'text',
                     placeholder : 'Your Name'
                 },
-                value: ''
+                value: '',
+                validation:{
+                    required:true
+                },
+                valid: false,
+                touched: false
             },
             street : {
                 elementType : 'input',
@@ -24,7 +28,12 @@ class ContacData extends Component {
                     type : 'text',
                     placeholder : 'Street'
                 },
-                value: ''
+                value: '',
+                validation:{
+                    required:true
+                },
+                valid: false,
+                touched: false
             },
             zipCode : {
                 elementType : 'input',
@@ -32,7 +41,14 @@ class ContacData extends Component {
                     type : 'text',
                     placeholder : 'ZIP Code'
                 },
-                value: ''
+                value: '',
+                validation:{
+                    required:true,
+                    minLength: 4,
+                    maxLength: 6
+                },
+                valid: false,
+                touched: false
             },
             country : {
                 elementType : 'input',
@@ -40,7 +56,12 @@ class ContacData extends Component {
                     type : 'text',
                     placeholder : 'Country'
                 },
-                value: ''
+                value: '',
+                validation:{
+                    required:true
+                },
+                valid: false,
+                touched: false
             },
             email : {
                 elementType : 'input',
@@ -48,7 +69,12 @@ class ContacData extends Component {
                     type : 'email',
                     placeholder : 'Your E-Mail'
                 },
-                value: ''
+                value: '',
+                validation:{
+                    required:true
+                },
+                valid: false,
+                touched: false
             },
             deliveryMethod : {
                 elementType : 'select',
@@ -58,10 +84,12 @@ class ContacData extends Component {
                         {value: 'cheapest', displayName: 'Cheapest'}
                     ]
                 },
-                value: ''
+                value: '',
+                valid: true
             }
         },
         loading: false,
+        formIsValid: false
     }
 
     orderHandler = (e) => {
@@ -78,7 +106,6 @@ class ContacData extends Component {
         };
         Axios.post('/orders.json', order)
             .then(response => {
-                // console.log(response)
                 this.setState({loading : false })
                 this.props.history.push('/');
             })
@@ -96,20 +123,51 @@ class ContacData extends Component {
         };
 
         updatedFormElement.value = e.target.value;
+        updatedFormElement.valid = this.checkValidity(e.target.value, updatedFormElement.validation);
+        updatedFormElement.touched = true;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
 
-        this.setState({orderForm : updatedOrderForm });
+        let inputElmentsValidation = [];
+
+        for (let inputElement in updatedOrderForm) {
+            inputElmentsValidation.push(updatedOrderForm[inputElement].valid);
+        }
+        let formIsValid = inputElmentsValidation.every((validValue) => validValue == true );
+        this.setState({orderForm : updatedOrderForm, formIsValid : formIsValid });
+    }
+
+    checkValidity (value, rules) {
+        if (rules) {
+            let isValid = true;
+    
+            if (rules.required) {
+                isValid = value.trim() !== '' && isValid;
+            }
+    
+            if (rules.minLength) {
+                isValid = value.length >= rules.minLength && isValid;
+            }
+    
+            if (rules.maxLength) {
+                isValid = value.length <= rules.maxLength && isValid;
+            }
+    
+            return isValid;
+        }
     }
 
     render () {
         let inputs = [];
-        for (let [formElement, {elementType, elementconfig, value}] of Object.entries(this.state.orderForm)) { 
+        for (let [formElement, {elementType, elementconfig, value, validation, valid, touched}] of Object.entries(this.state.orderForm)) { 
             inputs.push(
                 <Input 
                     elementType = {elementType} 
                     elementConfig = {elementconfig} 
                     value = {value} 
                     key = {formElement}
+                    invalid = {!valid}
+                    shouldValidate = {validation}
+                    touched = {touched}
                     changed = {(e) => this.inputChangedHandler(e, formElement)} >
                 </Input>
             );
@@ -117,7 +175,7 @@ class ContacData extends Component {
         let form = (
             <form onSubmit = {(e) => this.orderHandler(e)}>
                 {inputs}
-                <Button btnType = 'Success' > ORDER </Button>
+                <Button btnType = 'Success' disabled = {!this.state.formIsValid} > ORDER </Button>
             </form>
         );
 
